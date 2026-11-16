@@ -39,17 +39,41 @@ button:focus-visible,a:focus-visible{outline:3px solid #75a8e8;outline-offset:3p
 <p class="status" id="status" role="status" aria-live="polite">Ready to load the latest headlines.</p>
 <nav class="tabs" aria-label="News sections">
 <button class="tab active" data-target="all">All news</button><button class="tab" data-target="world">World</button>
-<button class="tab" data-target="singapore">Singapore</button><button class="tab" data-target="finance">Finance</button></nav>
+<button class="tab" data-target="singapore">Singapore</button><button class="tab" data-target="finance">Finance</button><button class="tab" data-target="sgstocks">SG Stocks</button></nav>
 <section class="section" id="world"><div class="head"><h2>🌍 World</h2><span class="note">International headlines</span></div><div class="grid" id="worldFeed"><div class="empty">Loading…</div></div></section>
 <section class="section" id="singapore"><div class="head"><h2>🇸🇬 Singapore</h2><span class="note">Local news &amp; developments</span></div><div class="grid" id="singaporeFeed"><div class="empty">Loading…</div></div></section>
 <section class="section" id="finance"><div class="head"><h2>📈 Business &amp; Finance</h2><span class="note">Markets, companies &amp; economy</span></div><div class="grid" id="financeFeed"><div class="empty">Loading…</div></div></section>
+
+<section class="section" id="sgstocks">
+<div class="head"><h2>🇸🇬 Singapore Stocks</h2><span class="note">SGX-listed ETFs &amp; blue chips</span></div>
+<p class="desc">Focused coverage of Singapore-listed exchange-traded funds, STI developments, major blue-chip companies, dividends, earnings and corporate announcements.</p>
+<div class="card" style="margin-bottom:12px">
+<strong>ETF watch</strong>
+<p class="desc">STI ETFs: SPDR STI ETF (ES3) and Nikko AM Singapore STI ETF (G3B). Also watch Singapore bond, REIT and other SGX-listed ETFs when relevant news appears.</p>
+<strong>Blue-chip watch</strong>
+<p class="desc">Banks (DBS, OCBC, UOB), Singtel, SGX, Singapore Airlines, Keppel, CapitaLand-related companies and other STI constituents.</p>
+</div>
+<div class="section" style="margin:12px 0">
+<div class="head"><h2 style="font-size:18px">ETF &amp; Index News</h2><span class="note">Funds, STI and REITs</span></div>
+<div class="grid" id="sgEtfFeed"><div class="empty">Loading Singapore ETF news…</div></div>
+</div>
+<div class="section" style="margin:12px 0">
+<div class="head"><h2 style="font-size:18px">Blue-Chip Company News</h2><span class="note">Banks, dividends and earnings</span></div>
+<div class="grid" id="sgBluechipFeed"><div class="empty">Loading blue-chip news…</div></div>
+</div>
+<div class="section" style="margin:12px 0">
+<div class="head"><h2 style="font-size:18px">Broader SGX Market News</h2><span class="note">Other Singapore market developments</span></div>
+<div class="grid" id="sgMarketFeed"><div class="empty">Loading SGX market news…</div></div>
+</div>
+</section>
 </main>
-<footer>Headlines and descriptions are supplied by publishers. This first version does not generate AI summaries or provide live market prices. News availability depends on publisher feeds and the public RSS conversion service. Open the original article for full context.</footer>
+<footer>Headlines and descriptions are supplied by publishers. The Singapore Stocks section groups relevant ETF, index and blue-chip stories from the available feeds; it is news coverage, not a live quote service, investment recommendation or AI-generated analysis. News availability depends on publisher feeds and the public RSS conversion service. Open the original article for full context.</footer>
 <script>
 const feeds={
 world:[{name:"BBC News",url:"https://feeds.bbci.co.uk/news/world/rss.xml"}],
 singapore:[{name:"CNA",url:"https://www.channelnewsasia.com/api/v1/rss-outbound-feed?_format=xml"}],
-finance:[{name:"CNBC",url:"https://www.cnbc.com/id/100003114/device/rss/rss.html"},{name:"The Business Times",url:"https://www.businesstimes.com.sg/rss"}]};
+finance:[{name:"CNBC",url:"https://www.cnbc.com/id/100003114/device/rss/rss.html"},{name:"The Business Times",url:"https://www.businesstimes.com.sg/rss"}],
+sgstocks:[{name:"The Business Times",url:"https://www.businesstimes.com.sg/rss"},{name:"CNA",url:"https://www.channelnewsasia.com/api/v1/rss-outbound-feed?_format=xml"}]};
 const statusEl=document.getElementById("status");
 function clean(s){const d=document.createElement("div");d.innerHTML=s||"";return(d.textContent||d.innerText||"").replace(/\s+/g," ").trim()}
 function cardFor(item,source){
@@ -71,9 +95,42 @@ stories.sort((a,b)=>new Date(b.item.pubDate||0)-new Date(a.item.pubDate||0));con
 stories.forEach(({item,source})=>{const title=clean(item.title).toLowerCase();if(!title||seen.has(title))return;seen.add(title);target.append(cardFor(item,source));count++});
 if(!count)target.innerHTML='<div class="empty">Headlines could not be loaded right now. Try Refresh later; the publisher feed or public feed service may be temporarily unavailable.</div>';
 return{count,failed:settled.filter(x=>x.status==="rejected").length}}
+
+function hasAny(text, words){return words.some(w=>text.includes(w))}
+async function loadSGStocks(){
+  const targets={
+    etf:document.getElementById("sgEtfFeed"),
+    blue:document.getElementById("sgBluechipFeed"),
+    market:document.getElementById("sgMarketFeed")
+  };
+  Object.values(targets).forEach(el=>el.replaceChildren());
+  const settled=await Promise.allSettled(feeds.sgstocks.map(fetchFeed));
+  let stories=[];settled.forEach(x=>{if(x.status==="fulfilled")stories.push(...x.value)});
+  stories.sort((a,b)=>new Date(b.item.pubDate||0)-new Date(a.item.pubDate||0));
+  const seen=new Set(), groups={etf:[],blue:[],market:[]};
+  const etfWords=["etf","exchange-traded","exchange traded","sti","straits times index","s-reit","reit","bond index","g3b","es3","a35","clr","cfa"];
+  const blueWords=["dbs","ocbc","uob","singtel","singapore airlines","sia ","sgx","keppel","sembcorp","sats","capitaland","comfortdelgro","yangzijiang","blue-chip","blue chip","dividend","earnings"];
+  stories.forEach(({item,source})=>{
+    const title=clean(item.title), body=(title+" "+clean(item.description||item.content||"")).toLowerCase();
+    const key=title.toLowerCase();if(!title||seen.has(key))return;seen.add(key);
+    const record={item,source};
+    if(hasAny(body,etfWords))groups.etf.push(record);
+    else if(hasAny(body,blueWords))groups.blue.push(record);
+    else groups.market.push(record);
+  });
+  // Keep the section useful even on a quiet news day: show recent Singapore business stories as market context.
+  const fallback=stories.slice(0,5).map(x=>({item:x.item,source:x.source}));
+  [["etf",groups.etf],["blue",groups.blue],["market",groups.market]].forEach(([key,list])=>{
+    const selected=list.slice(0,6);
+    if(!selected.length && key==="market") selected.push(...fallback);
+    if(!selected.length) targets[key].innerHTML='<div class="empty">No matching headlines in the latest feeds. Check again after the next market update.</div>';
+    else selected.forEach(x=>targets[key].append(cardFor(x.item,x.source)));
+  });
+  return stories.length;
+}
 async function refresh(){
 const btn=document.getElementById("refreshBtn");btn.disabled=true;btn.textContent="Refreshing…";statusEl.textContent="Fetching the latest headlines…";
-const r=await Promise.all(["world","singapore","finance"].map(load));const total=r.reduce((n,x)=>n+x.count,0),failed=r.reduce((n,x)=>n+x.failed,0);
+const r=await Promise.all(["world","singapore","finance"].map(load));const sgCount=await loadSGStocks();const total=r.reduce((n,x)=>n+x.count,0)+sgCount,failed=r.reduce((n,x)=>n+x.failed,0);
 statusEl.textContent=total?`Updated. ${total} headlines loaded${failed?" · Some feeds were unavailable":""}.`:"No headlines loaded. Please try again later.";
 btn.disabled=false;btn.textContent="↻ Refresh headlines"}
 function show(target){document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b.dataset.target===target));document.querySelectorAll(".section").forEach(s=>s.classList.toggle("hidden",target!=="all"&&s.id!==target))}
