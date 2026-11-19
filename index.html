@@ -29,6 +29,11 @@ h3{font-size:17px;line-height:1.35;margin:0 0 8px}.desc{font-size:14px;color:#52
 .card a{color:#244a78;font-weight:700;text-decoration:none;font-size:14px}.empty{border-style:dashed;color:var(--muted);font-size:14px}
 footer{max-width:920px;margin:auto;padding:0 16px 28px;color:var(--muted);font-size:12px}.hidden{display:none!important}
 button:focus-visible,a:focus-visible{outline:3px solid #75a8e8;outline-offset:3px}
+
+.tv-wrap{margin:12px 0;overflow:hidden;border:1px solid var(--line);border-radius:12px;background:#fff;min-height:68px}
+.watch-links{display:flex;flex-wrap:wrap;gap:10px 16px;margin-top:12px}
+.watch-links a{font-size:13px;font-weight:700;color:#244a78;text-decoration:none}
+.watch-links a:hover{text-decoration:underline}
 @media(min-width:700px){main{padding:24px 20px 50px}.grid{grid-template-columns:1fr 1fr}.card{padding:18px}}
 </style></head>
 <body>
@@ -42,11 +47,25 @@ button:focus-visible,a:focus-visible{outline:3px solid #75a8e8;outline-offset:3p
 <button class="tab" data-target="singapore">Singapore</button><button class="tab" data-target="finance">Finance</button><button class="tab" data-target="sgstocks">SG Stocks</button></nav>
 <section class="section" id="world"><div class="head"><h2>🌍 World</h2><span class="note">International headlines</span></div><div class="grid" id="worldFeed"><div class="empty">Loading…</div></div></section>
 <section class="section" id="singapore"><div class="head"><h2>🇸🇬 Singapore</h2><span class="note">Local news &amp; developments</span></div><div class="grid" id="singaporeFeed"><div class="empty">Loading…</div></div></section>
-<section class="section" id="finance"><div class="head"><h2>📈 Business &amp; Finance</h2><span class="note">Markets, companies &amp; economy</span></div><div class="grid" id="financeFeed"><div class="empty">Loading…</div></div></section>
+<section class="section" id="finance"><div class="head"><h2>📈 Singapore Business &amp; Finance</h2><span class="note">The Business Times · CNA · The Straits Times</span></div><div class="grid" id="financeFeed"><div class="empty">Loading…</div></div></section>
 
 <section class="section" id="sgstocks">
 <div class="head"><h2>🇸🇬 Singapore Stocks</h2><span class="note">SGX-listed ETFs &amp; blue chips</span></div>
-<p class="desc">Focused coverage of Singapore-listed exchange-traded funds, STI developments, major blue-chip companies, dividends, earnings and corporate announcements.</p>
+<p class="desc">Singapore market coverage drawn from The Business Times, CNA Business and The Straits Times: ETFs, STI developments, blue-chip companies, dividends, earnings and corporate announcements.</p>
+<div class="card" style="margin-bottom:12px">
+<strong>My Singapore Market Watch</strong>
+<p class="desc">Watchlist (not a statement of holdings): ES3, G3B, DBS (D05), OCBC (O39), UOB (U11), Singtel (Z74), Singapore Airlines (C6L), ST Engineering (S63) and Keppel (BN4). Indicative prices and percentage changes are supplied by TradingView and may be delayed or unavailable for some SGX counters.</p>
+<div class="tv-wrap"><div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div>
+<script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+{"symbols":[{"proName":"SGX:ES3","title":"SPDR STI ETF"},{"proName":"SGX:G3B","title":"Nikko AM STI ETF"},{"proName":"SGX:D05","title":"DBS"},{"proName":"SGX:O39","title":"OCBC"},{"proName":"SGX:U11","title":"UOB"},{"proName":"SGX:Z74","title":"Singtel"},{"proName":"SGX:C6L","title":"Singapore Airlines"},{"proName":"SGX:S63","title":"ST Engineering"},{"proName":"SGX:BN4","title":"Keppel"}],"showSymbolLogo":false,"colorTheme":"light","isTransparent":false,"displayMode":"adaptive","locale":"en"}
+</script>
+<div class="tradingview-widget-copyright"><a href="https://www.tradingview.com/" rel="noopener" target="_blank">Market data by TradingView</a></div></div></div>
+<div class="watch-links">
+<a href="https://www.sgx.com/sgxnet" target="_blank" rel="noopener">Official SGX company announcements ↗</a>
+<a href="https://www.sgx.com/stock-exchange/market-updates" target="_blank" rel="noopener">SGX market updates ↗</a>
+<a href="https://www.businesstimes.com.sg/keywords/stocks-watch/" target="_blank" rel="noopener">Business Times: Stocks to watch ↗</a>
+</div>
+</div>
 <div class="card" style="margin-bottom:12px">
 <strong>ETF watch</strong>
 <p class="desc">STI ETFs: SPDR STI ETF (ES3) and Nikko AM Singapore STI ETF (G3B). Also watch Singapore bond, REIT and other SGX-listed ETFs when relevant news appears.</p>
@@ -67,13 +86,23 @@ button:focus-visible,a:focus-visible{outline:3px solid #75a8e8;outline-offset:3p
 </div>
 </section>
 </main>
-<footer>Headlines and descriptions are supplied by publishers. The Singapore Stocks section groups relevant ETF, index and blue-chip stories from the available feeds; it is news coverage, not a live quote service, investment recommendation or AI-generated analysis. News availability depends on publisher feeds and the public RSS conversion service. Open the original article for full context.</footer>
+<footer>Business and Singapore stock headlines are sourced from The Business Times, CNA Business and The Straits Times. The Singapore Stocks section groups relevant ETF, index and blue-chip stories from those publisher feeds. Descriptions are publisher-provided when available; this is not AI-generated analysis, live price data or investment advice. News availability depends on publisher feeds and the public RSS conversion service. Open the original article for full context.</footer>
+
+
 <script>
 const feeds={
 world:[{name:"BBC News",url:"https://feeds.bbci.co.uk/news/world/rss.xml"}],
 singapore:[{name:"CNA",url:"https://www.channelnewsasia.com/api/v1/rss-outbound-feed?_format=xml"}],
-finance:[{name:"CNBC",url:"https://www.cnbc.com/id/100003114/device/rss/rss.html"},{name:"The Business Times",url:"https://www.businesstimes.com.sg/rss"}],
-sgstocks:[{name:"The Business Times",url:"https://www.businesstimes.com.sg/rss"},{name:"CNA",url:"https://www.channelnewsasia.com/api/v1/rss-outbound-feed?_format=xml"}]};
+finance:[
+{name:"The Business Times",url:"https://www.businesstimes.com.sg/rss/top-stories"},
+{name:"CNA Business",url:"https://www.channelnewsasia.com/api/v1/rss-outbound-feed?_format=xml&category=6936"},
+{name:"The Straits Times",url:"https://www.straitstimes.com/news/business/rss.xml"}
+],
+sgstocks:[
+{name:"The Business Times",url:"https://www.businesstimes.com.sg/rss/top-stories"},
+{name:"CNA Business",url:"https://www.channelnewsasia.com/api/v1/rss-outbound-feed?_format=xml&category=6936"},
+{name:"The Straits Times",url:"https://www.straitstimes.com/news/business/rss.xml"}
+]};
 const statusEl=document.getElementById("status");
 function clean(s){const d=document.createElement("div");d.innerHTML=s||"";return(d.textContent||d.innerText||"").replace(/\s+/g," ").trim()}
 function cardFor(item,source){
@@ -81,7 +110,7 @@ const c=document.createElement("article");c.className="card";const m=document.cr
 const b=document.createElement("span");b.className="badge";b.textContent=source;m.append(b);
 const dt=new Date(item.pubDate);if(!isNaN(dt)){const t=document.createElement("span");t.textContent=dt.toLocaleString([],{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"});m.append(t)}
 const h=document.createElement("h3");h.textContent=clean(item.title)||"Untitled story";
-const summary=clean(item.description||item.content||"");const p=document.createElement("p");p.className="desc";p.textContent=summary.length>250?summary.slice(0,247)+"…":summary;
+const summary=clean(item.description||item.content||"");const p=document.createElement("p");p.className="desc";p.textContent=summary? (summary.length>250?summary.slice(0,247)+"…":summary) : "Publisher headline. Open the original article for the full report and details.";
 const a=document.createElement("a");a.href=item.link||"#";a.target="_blank";a.rel="noopener noreferrer";a.textContent="Read original article ↗";
 c.append(m,h);if(summary)c.append(p);c.append(a);return c}
 async function fetchFeed(feed){
@@ -108,8 +137,8 @@ async function loadSGStocks(){
   let stories=[];settled.forEach(x=>{if(x.status==="fulfilled")stories.push(...x.value)});
   stories.sort((a,b)=>new Date(b.item.pubDate||0)-new Date(a.item.pubDate||0));
   const seen=new Set(), groups={etf:[],blue:[],market:[]};
-  const etfWords=["etf","exchange-traded","exchange traded","sti","straits times index","s-reit","reit","bond index","g3b","es3","a35","clr","cfa"];
-  const blueWords=["dbs","ocbc","uob","singtel","singapore airlines","sia ","sgx","keppel","sembcorp","sats","capitaland","comfortdelgro","yangzijiang","blue-chip","blue chip","dividend","earnings"];
+  const etfWords=["etf","exchange-traded","exchange traded","sti","straits times index","s-reit","reit","bond index","g3b","es3","a35","clr","cfa","lion-phillip","nikko am","spdr"];
+  const blueWords=["dbs","ocbc","uob","singtel","singapore airlines","sia ","sgx","keppel","sembcorp","sats","capitaland","comfortdelgro","yangzijiang","st engineering","wilmar","genting singapore","netlink","starhub","venture corporation","blue-chip","blue chip","dividend","earnings","results","buyback","share buy-back","ex-dividend"];
   stories.forEach(({item,source})=>{
     const title=clean(item.title), body=(title+" "+clean(item.description||item.content||"")).toLowerCase();
     const key=title.toLowerCase();if(!title||seen.has(key))return;seen.add(key);
@@ -123,7 +152,7 @@ async function loadSGStocks(){
   [["etf",groups.etf],["blue",groups.blue],["market",groups.market]].forEach(([key,list])=>{
     const selected=list.slice(0,6);
     if(!selected.length && key==="market") selected.push(...fallback);
-    if(!selected.length) targets[key].innerHTML='<div class="empty">No matching headlines in the latest feeds. Check again after the next market update.</div>';
+    if(!selected.length) targets[key].innerHTML='<div class="empty">No ETF-specific headlines were found in the current publisher feeds. Use the SGX links above for official fund and index announcements.</div>';
     else selected.forEach(x=>targets[key].append(cardFor(x.item,x.source)));
   });
   return stories.length;
